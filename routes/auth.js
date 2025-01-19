@@ -1,11 +1,32 @@
-// routes/auth.js
 const express = require('express');
-const router = express.Router();
+const passport = require('passport');
 const { signup, login, googleLogin } = require('../controllers/auth');
 
-// Define routes for signup, login, and Google login
+const router = express.Router();
+
 router.post('/signup', signup);
 router.post('/login', login);
-router.post('/google-login', googleLogin);
+
+const jwt = require('jsonwebtoken');
+
+router.get(
+    '/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/signup',
+        session: false, 
+    }),
+    (req, res) => {
+        if (!req.user) {
+            return res.status(400).send('User authentication failed');
+        }
+        const token = jwt.sign({ id: req.user._id }, 'asdfghiucv709586967', { expiresIn: '1d' });
+        
+        res.cookie('token', token, { httpOnly: true });
+
+        
+        res.redirect('/profile');
+    }
+);
+
 
 module.exports = router;
