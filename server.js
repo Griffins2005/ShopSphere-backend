@@ -1,3 +1,4 @@
+// server.js (Backend)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -27,18 +28,17 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  const nonce = Buffer.from(crypto.randomBytes(16)).toString('base64');
-  res.header('Access-Control-Allow-Origin', allowedOrigins[0]);
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  const nonce = crypto.randomBytes(16).toString('base64');
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader(
     'Content-Security-Policy',
-    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://accounts.google.com;`
+    `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://js.stripe.com https://accounts.google.com;`
   );
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
-  
   next();
 });
 
@@ -53,7 +53,9 @@ app.use('/api/store', storeRoutes);
 app.use('/api/checkout', checkoutRoutes);
 
 mongoose
-  .connect(process.env.MONGO_URI, {})
+  .connect(process.env.MONGO_URI, { 
+    // useNewUrlParser: true, useUnifiedTopology: true 
+    })
   .then(() => {
     console.log('Connected to MongoDB');
     const port = process.env.PORT || 5001;
@@ -63,4 +65,5 @@ mongoose
   })
   .catch((err) => {
     console.error('MongoDB connection failed:', err.message);
+    process.exit(1);
   });
