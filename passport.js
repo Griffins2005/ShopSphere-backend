@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://shop-sphere-backend-sigma.vercel.app/api/auth/google/callback", // Ensure this is the correct callback URL
+      callbackURL: "https://shopsphere-backend-app.vercel.app/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
