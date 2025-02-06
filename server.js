@@ -1,21 +1,20 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const dotenv = require("dotenv");
+dotenv.config();
+const passport = require("./passport.js");
+
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require("./routes/cart");
 const wishlistRoutes = require("./routes/wishlist");
 const storeRoutes = require("./routes/store");
 const checkoutRoutes = require("./routes/checkout");
-const cookieSession = require('cookie-session');
-const passport = require("passport");
+
 const app = express();
 
-// Configure CORS with allowed origins
-const allowedOrigins = [
-  'http://localhost:3000'
-];
+const allowedOrigins = ['https://shopsphere-ecommerce.vercel.app'];
 
 app.use(
   cors({
@@ -25,24 +24,7 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "script-src 'self' 'nonce-your_generated_nonce_here' https://accounts.google.com;"
-  );
-  next();
-});
-
-app.use(
-  cookieSession({
-    name: 'session',
-    keys: ['cyberwolve'],
-    maxAge: 24 * 60 * 60 * 1000,
-  })
-);
-
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);

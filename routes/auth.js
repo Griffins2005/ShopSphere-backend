@@ -1,32 +1,41 @@
 const express = require('express');
 const passport = require('passport');
-const { signup, login, googleLogin } = require('../controllers/auth');
-
+const jwt = require('jsonwebtoken');
+const User = require('../models/auth');
 const router = express.Router();
 
-router.post('/signup', signup);
-router.post('/login', login);
-
-const jwt = require('jsonwebtoken');
-
 router.get(
-    '/google/callback',
-    passport.authenticate('google', {
-        failureRedirect: '/signup',
-        session: false, 
-    }),
-    (req, res) => {
-        if (!req.user) {
-            return res.status(400).send('User authentication failed');
-        }
-        const token = jwt.sign({ id: req.user._id }, 'asdfghiucv709586967', { expiresIn: '1d' });
-        
-        res.cookie('token', token, { httpOnly: true });
-
-        
-        res.redirect('/profile');
-    }
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: 'https://shopsphere-ecommerce.vercel.app/signup' }),
+  async (req, res) => {
+    try {
+      const { email, displayName, avatar } = req.user.profile;
+      let user = await User.findOne({ email });
+
+      if (!user) {
+        user = new User({
+          email,
+          name: displayName,
+          avatar,
+        });
+        await user.save();
+      }
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.json({ token });
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+router.get("/current_user", (req, res) => {
+  res.send(req.user);
+});
 
 module.exports = router;
