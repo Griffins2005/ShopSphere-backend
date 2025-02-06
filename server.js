@@ -7,7 +7,6 @@ const crypto = require('crypto');
 
 dotenv.config();
 
-// Import routes
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
