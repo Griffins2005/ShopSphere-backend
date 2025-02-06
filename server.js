@@ -1,11 +1,9 @@
-// server.js (Backend)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('./passport.js');
 const crypto = require('crypto');
-
 dotenv.config();
 
 const userRoutes = require('./routes/user');
@@ -17,16 +15,33 @@ const checkoutRoutes = require('./routes/checkout');
 
 const app = express();
 
+const allowedOrigins = ['http://localhost:3000', 'https://shopsphere-ecommerce.vercel.app'];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(
   cors({
-    origin: 'https://shopsphere-ecommerce.vercel.app',
+    origin: ['https://shopsphere-ecommerce.vercel.app', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 );
 
-app.options('*', cors());
+app.use(express.json());
+app.use(passport.initialize());
 
 app.use((req, res, next) => {
   const nonce = crypto.randomBytes(16).toString('base64');
@@ -38,9 +53,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-app.use(passport.initialize());
-
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/cart', cartRoutes);
@@ -50,8 +62,7 @@ app.use('/api/checkout', checkoutRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI, { 
-    //useNewUrlParser: true, useUnifiedTopology: true 
-    })
+   })
   .then(() => {
     console.log('✅ Connected to MongoDB');
     const port = process.env.PORT || 5001;
