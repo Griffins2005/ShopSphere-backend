@@ -17,21 +17,17 @@ const checkoutRoutes = require('./routes/checkout');
 
 const app = express();
 
-const allowedOrigins = ['https://shopsphere-ecommerce.vercel.app'];
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: 'https://shopsphere-ecommerce.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 );
 
 app.use((req, res, next) => {
   const nonce = crypto.randomBytes(16).toString('base64');
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader(
     'Content-Security-Policy',
     `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://js.stripe.com https://accounts.google.com;`

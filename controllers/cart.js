@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 
 exports.getCartItems = async (req, res) => {
   try {
+    console.log("Fetching cart items...");
     const cartItems = await CartItem.find();
+    console.log("Cart items fetched:", cartItems);
     res.status(200).json(cartItems);
   } catch (err) {
     console.error("Error fetching cart items:", err);
