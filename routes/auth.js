@@ -9,8 +9,8 @@ router.get("/google", passport.authenticate("google", {
 }));
 
 router.get("/google/callback", passport.authenticate("google", {
-  failureRedirect: "/signup",
-  successRedirect: "https://shopsphere-ecommerce.vercel.app", 
+  failureRedirect: "https://shopsphere-ecommerce.vercel.app/signup",
+  successRedirect: "https://shopsphere-ecommerce.vercel.app/profile", 
 }));
 
 router.get("/current_user", (req, res) => {
