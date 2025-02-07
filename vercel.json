@@ -1,14 +1,27 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server.js"
+    }
+  ],
+  "headers": [
+  {
+    "source": "/api/(.*)",
     "headers": [
-      {
-        "source": "/api/(.*)",
-        "headers": [
-          { "key": "Access-Control-Allow-Origin", "value": "https://project-management-tool-app.vercel.app" },
-          { "key": "Access-Control-Allow-Methods", "value": "GET, POST, DELETE, PUT, OPTIONS" },
-          { "key": "Access-Control-Allow-Headers", "value": "Origin, X-Requested-With, Content-Type, Accept, Authorization" },
-          { "key": "Access-Control-Allow-Credentials", "value": "true" }
-        ]
-      }
+      { "key": "Access-Control-Allow-Origin", "value": "https://shopsphere-ecommerce.vercel.app" },
+      { "key": "Access-Control-Allow-Methods", "value": "GET, POST, DELETE, PUT, OPTIONS" },
+      { "key": "Access-Control-Allow-Headers", "value": "Origin, X-Requested-With, Content-Type, Accept, Authorization" },
+      { "key": "Access-Control-Allow-Credentials", "value": "true" }
     ]
   }
-  
+]
+
+}
