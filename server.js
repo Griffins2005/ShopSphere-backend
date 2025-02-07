@@ -16,12 +16,11 @@ const checkoutRoutes = require('./routes/checkout');
 const app = express();
 
 app.use(cors({
-  origin: ['https://shopsphere-ecommerce.vercel.app'], 
+  origin: ['https://shopsphere-ecommerce.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  credentials: true, 
 }));
-
 
 app.use(express.json());
 app.use(passport.initialize());
