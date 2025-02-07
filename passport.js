@@ -12,11 +12,13 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "https://shopsphere-backend-app.vercel.app/api/auth/google/callback",
       passReqToCallback: true,
-      session: false, 
+      session: false,  
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Google Profile:", profile); 
+        console.log("Access Token:", accessToken);
+        console.log("refresh Token:", refreshToken);
+        console.log("Google Profile:", profile);
 
         let user = await User.findOne({ googleId: profile.id });
 
